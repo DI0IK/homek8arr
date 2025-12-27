@@ -18,12 +18,10 @@ export async function GET(req: NextRequest): Promise<NextResponse> {
 		plural,
 	});
 
-	console.log("Headers:", req.headers);
-
 	const AuthentikGroupsHeader =
-		req.headers.get(process.env.PROXY_GROUPS_HEADER || "X-authentik-groups") ||
+		req.headers.get(process.env.PROXY_GROUPS_HEADER || "x-authentik-groups") ||
 		"";
-	const userGroups = AuthentikGroupsHeader.split(",")
+	const userGroups = AuthentikGroupsHeader.split("|")
 		.map((g) => g.trim())
 		.filter((g) => g.length > 0);
 
