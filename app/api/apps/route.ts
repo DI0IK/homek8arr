@@ -1,5 +1,5 @@
 import * as k8s from "@kubernetes/client-node";
-import type { NextRequest, NextResponse } from "next/server";
+import { type NextRequest, NextResponse } from "next/server";
 import type { ApiResponse } from "@/app/lib/types";
 
 const kc = new k8s.KubeConfig();
@@ -11,7 +11,7 @@ const group = "traefik.io";
 const version = "v1alpha1";
 const plural = "ingressroutes";
 
-export async function GET(req: NextRequest, _res: NextResponse<ApiResponse>) {
+export async function GET(req: NextRequest): Promise<NextResponse> {
 	const objects = await k8sApi.listClusterCustomObject({
 		group,
 		version,
@@ -67,13 +67,11 @@ export async function GET(req: NextRequest, _res: NextResponse<ApiResponse>) {
 				if (!item.groups || item.groups.length === 0) {
 					return true;
 				}
-				console.log("Item Groups:", item.groups, "User Groups:", userGroups);
 				return item.groups.some((group) => userGroups.includes(group));
 			}),
 	};
 
-	return new Response(JSON.stringify(response), {
+	return NextResponse.json(response, {
 		status: 200,
-		headers: { "Content-Type": "application/json" },
 	});
 }
